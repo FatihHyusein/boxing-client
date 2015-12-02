@@ -1,7 +1,6 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-angular.module('myApp', [
+var BoxingApp = angular.module('boxing', [
   'ngRoute',
   'boxing.home',
   'boxing.login'
