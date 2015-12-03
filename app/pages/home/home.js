@@ -3,7 +3,7 @@
 angular.module('boxing.home', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/home', {
+  $routeProvider.when('/', {
     templateUrl: 'pages/home/home.html',
     controller: 'HomeCtrl'
   });
