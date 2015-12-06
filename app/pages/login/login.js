@@ -1,29 +1,39 @@
 'use strict';
 
-angular.module('boxing.login', ['ngRoute'])
+angular.module('boxing.login', ['ui.router'])
 
-    .config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/login', {
-            templateUrl: 'pages/login/login.html',
-            controller: 'LoginCtrl'
-        });
-    }])
+    .config(['$stateProvider', '$urlRouterProvider',
+        function ($stateProvider, $urlRouterProvider) {
+            $urlRouterProvider
+                .when('/login/:id', '/logins/:id')
+                .when('/logins/:id', '/logins/:id');
 
-    .controller('LoginCtrl', ['$rootScope', '$scope', '$location', 'Login', function ($rootScope, $scope, $location, Login) {
-        $scope.login = function () {
-            Login.create({},
-                {
-                    username: $scope.username,
-                    password: $scope.password
-                }, successLogin, failLogin
-            );
+            $stateProvider
+                .state('logins', {
+                    url: 'logins',
+                    templateUrl: 'pages/login/login.html',
+                    controller: 'LoginCtrl'
+                });
+        }])
 
-            function successLogin(response) {
-                $rootScope.loggedInUser = $scope.username;
-                $location.path("/");
-            }
+    .controller('LoginCtrl', ['$rootScope', '$scope', 'Login', '$state',
+        function ($rootScope, $scope, Login, $state) {
+            $scope.login = function () {
+                Login.create({},
+                    $.param({
+                        username: $scope.username,
+                        password: $scope.password
+                    }), successLogin, failLogin
+                );
 
-            function failLogin(response) {
-            }
-        };
-    }]);
+                function successLogin(response) {
+                    localStorage.setItem("authToken", response.authToken);
+                    localStorage.setItem("userId", response.id);
+                    $rootScope.loggedInUser = true;
+                    $state.go('home');
+                }
+
+                function failLogin(response) {
+                }
+            };
+        }]);

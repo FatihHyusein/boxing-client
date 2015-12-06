@@ -1,21 +1,40 @@
+var url = "http://localhost:49365/api/";
+
 BoxingApp.factory("Login", function ($resource) {
-        return $resource("/api/contacts/:id", {id: "@_id"},
+
+
+        return $resource(url + "logins/:id", {id: "@_id"},
             {
                 'create': {
                     method: 'POST',
-                    responseType: 'json'
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
                 },
-                'delete': {method: 'DELETE'}
+                'delete': {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                }
             }
         );
     })
 
 
     .factory("User", function ($resource) {
-        return $resource("/api/users/:id", {id: "@_id"},
+        return $resource(url + "users/:id", {id: "@_id"},
             {
                 'create': {method: 'POST'},
-                'getMany': {method: 'GET', isArray: true},
+                'getMany': {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    },
+                    isArray: true
+                },
                 'getOne': {method: 'GET', isArray: false},
                 'update': {method: 'PUT'},
                 'delete': {method: 'DELETE'}
@@ -25,7 +44,7 @@ BoxingApp.factory("Login", function ($resource) {
 
 
     .factory("Match", function ($resource) {
-        return $resource("/api/matches/:id", {id: "@_id"},
+        return $resource(url + "matches/:id", {id: "@_id"},
             {
                 'create': {method: 'POST'},
                 'getMany': {method: 'GET', isArray: true},
@@ -38,7 +57,7 @@ BoxingApp.factory("Login", function ($resource) {
 
 
     .factory("Prediction", function ($resource) {
-        return $resource("/api/matches/:matchId/predictions/:predictionId", {
+        return $resource(url + "matches/:matchId/predictions/:predictionId", {
                 matchId: "@matchId",
                 predictionId: "@predictionId"
             },

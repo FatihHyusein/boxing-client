@@ -1,23 +1,57 @@
 'use strict';
 
 var BoxingApp = angular.module('boxing', [
-    'ngRoute',
-    'ngResource',
-    'boxing.home',
-    'boxing.login'
-]).
-config(['$routeProvider', '$resourceProvider', function ($routeProvider, $resourceProvider) {
-    $resourceProvider.defaults.stripTrailingSlashes = false;
-    $routeProvider.otherwise({redirectTo: '/login'});
-}]);
+        'ui.router',
+        'ngAnimate',
+        'ngResource',
+        'boxing.login',
+        'boxing.users'
+    ])
+    .config(['$stateProvider', '$urlRouterProvider', '$resourceProvider',
+        function ($stateProvider, $urlRouterProvider, $resourceProvider) {
+            $resourceProvider.defaults.stripTrailingSlashes = false;
+            //$urlRouterProvider.otherwise('/');
+
+            $stateProvider
+                .state("home", {
+                    url: "/",
+                    templateUrl: 'pages/home/home.html',
+                    controller: 'HomeCtrl'
+                })
+        }])
 
 
-BoxingApp.run(function ($rootScope, $location) {
-    $rootScope.$on("$routeChangeStart", function (event, next, current) {
-        if ($rootScope.loggedInUser == null) {
-            if (next.templateUrl != "pages/login/login.html") {
-                $location.path("/login");
+    .run(['$rootScope', '$state', '$stateParams',
+        function ($rootScope, $state, $stateParams) {
+            var authToken = localStorage.getItem('authToken');
+            if (authToken && authToken != '') {
+                $rootScope.authToken = authToken;
+                $rootScope.loggedInUser = true;
             }
-        }
-    });
-});
+            else {
+                $rootScope.loggedInUser = false;
+            }
+
+            $rootScope.$state = $state;
+            $rootScope.$stateParams = $stateParams;
+        }])
+
+    //todo rename to nav ctrl
+    .controller('MainCtrl', ['$rootScope', '$scope', 'Login', '$state',
+        function ($rootScope, $scope, Login, $state) {
+            $scope.logout = function () {
+                Login.delete(
+                    {id: localStorage.getItem("userId")},
+                    {}, successLogout, failLogout
+                );
+
+                function successLogout(response) {
+                    localStorage.removeItem("authToken");
+                    $rootScope.loggedInUser = false;
+                    $state.go('home');
+                }
+
+                function failLogout(response) {
+                }
+            };
+        }]);
