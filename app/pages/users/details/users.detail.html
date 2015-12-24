@@ -1,0 +1,19 @@
+<div>
+    <label> Full Name:
+        <span>{{user.FullName}}</span>
+    </label>
+</div>
+<div>
+    <label> Username:
+        <span>{{user.Username}}</span>
+    </label>
+</div>
+<div>
+    <label> Rating:
+        <span>{{user.Rating}}</span>
+    </label>
+</div>
+
+<button class="btn btn-default" ui-sref="users.edit({id:user.Id})">Edit</button>
+
+<button class="btn btn-default" ng-click="removeUser(user.Id)">Remove</button>

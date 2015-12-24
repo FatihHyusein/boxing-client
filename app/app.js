@@ -4,6 +4,7 @@ var BoxingApp = angular.module('boxing', [
         'ui.router',
         'ngAnimate',
         'ngResource',
+        'ui.bootstrap',
         'boxing.login',
         'boxing.users'
     ])

@@ -24,9 +24,14 @@ BoxingApp.factory("Login", function ($resource) {
 
 
     .factory("User", function ($resource) {
-        return $resource(url + "users/:id", {id: "@_id"},
+        return $resource(url + "users/:id", {id: "@id"},
             {
-                'create': {method: 'POST'},
+                'create': {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                },
                 'getMany': {
                     method: 'GET',
                     headers: {
@@ -35,9 +40,22 @@ BoxingApp.factory("Login", function ($resource) {
                     },
                     isArray: true
                 },
-                'getOne': {method: 'GET', isArray: false},
+                'getOne': {
+                    method: 'GET',
+                    isArray: false,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
                 'update': {method: 'PUT'},
-                'delete': {method: 'DELETE'}
+                'delete': {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                }
             }
         );
     })

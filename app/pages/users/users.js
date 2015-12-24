@@ -16,55 +16,100 @@ angular.module('boxing.users', ['ui.router'])
 
                         templateUrl: 'pages/users/users.html',
 
-                        //resolve: {
-                        //    users: ['User',
-                        //        function (User) {
-                        //            debugger;
-                        //            return User.getMany();
-                        //        }]
-                        //},
+                        resolve: {
+                            users: ['User',
+                                function (User) {
+                                    return User.getMany();
+                                }]
+                        },
 
-                        controller: ['$scope', '$state', 'User',
-                            function ($scope, $state, User) {
-                                $scope.users = User.getMany();
+                        controller: ['$scope',
+                            function ($scope) {
+                                $scope.users = [];
                             }]
                     })
 
                     .state('users.list', {
                         url: '',
-                        templateUrl: 'pages/users/users.list.html'
+                        templateUrl: 'pages/users/users.list.html',
+                        controller: ['$scope', '$state', 'User',
+                            function ($scope, $state, User) {
+                                var currentPage = 0;
+                                $scope.filters = {
+                                    skip: 0,
+                                    take: 5,
+                                    sort: 'rating'
+                                };
+                                $scope.getUsers = function (filter) {
+                                    if (filter && filter.sort) {
+                                        if ($scope.filters.sort == filter.sort) {
+                                            if ($scope.filters.sort.indexOf('-') == 0) {
+                                                $scope.filters.sort = filter.sort;
+                                            }
+                                            else {
+                                                $scope.filters.sort = '-' + filter.sort;
+                                            }
+                                        }
+                                        else {
+                                            $scope.filters.sort = filter.sort;
+                                        }
+                                    }
+
+                                    else if (filter && filter.page) {
+                                        currentPage = (filter.page == 'next') ? ++currentPage : --currentPage;
+                                    }
+
+                                    $scope.filters.skip = $scope.filters.take * currentPage;
+                                    $scope.users = User.getMany($scope.filters);
+                                };
+
+                                $scope.getUsers();
+                            }]
                     })
 
                     .state('users.detail', {
-                        url: '/{userId:[0-9]{1,4}}',
+                        url: '/{id:[0-9]{1,4}}',
 
                         views: {
                             '': {
-                                templateUrl: 'app/contacts/contacts.detail.html',
-                                controller: ['$scope', '$stateParams', 'utils',
-                                    function ($scope, $stateParams, utils) {
-                                        $scope.contact = utils.findById($scope.contacts, $stateParams.contactId);
-                                    }]
-                            },
+                                templateUrl: 'pages/users/details/users.detail.html',
+                                controller: ['$scope', '$stateParams', 'User', '$state',
+                                    function ($scope, $stateParams, User, $state) {
+                                        $scope.user = User.getOne({
+                                            id: $stateParams.id
+                                        });
 
-                            'hint@': {
-                                template: 'This is contacts.detail populating the "hint" ui-view'
+                                        $scope.removeUser = function (userId) {
+                                            User.delete({id: userId}, successDelete);
+
+                                            function successDelete(response) {
+                                                $state.go('users.list');
+                                            }
+                                        }
+                                    }
+                                ]
                             }
                         }
                     })
 
-                    .state('users.detail.edit', {
+                    .state('users.edit', {
+                        url: '/{id:[0-9]{1,4}}',
+
                         views: {
-                            '@contacts.detail': {
-                                templateUrl: 'app/contacts/contacts.detail.item.edit.html',
-                                controller: ['$scope', '$stateParams', '$state', 'utils',
-                                    function ($scope, $stateParams, $state, utils) {
-                                        $scope.item = utils.findById($scope.contact.items, $stateParams.itemId);
-                                        $scope.done = function () {
+                            '': {
+                                templateUrl: 'pages/users/details/users.edit.html',
+                                controller: ['$scope', '$stateParams', '$state', 'User',
+                                    function ($scope, $stateParams, $state, User) {
+                                        $scope.user = User.getOne({
+                                            id: $stateParams.id
+                                        });
+
+                                        $scope.save = function () {
                                             // Go back up. '^' means up one. '^.^' would be up twice, to the grandparent.
-                                            $state.go('^', $stateParams);
+                                            $state.go("users.detail", {id: $stateParams.id});
                                         };
-                                    }]
+                                    }
+                                ]
                             }
                         }
                     });
