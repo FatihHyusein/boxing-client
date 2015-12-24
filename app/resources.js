@@ -64,11 +64,43 @@ BoxingApp.factory("Login", function ($resource) {
     .factory("Match", function ($resource) {
         return $resource(url + "matches/:id", {id: "@_id"},
             {
-                'create': {method: 'POST'},
-                'getMany': {method: 'GET', isArray: true},
-                'getOne': {method: 'GET', isArray: false},
-                'update': {method: 'PUT'},
-                'delete': {method: 'DELETE'}
+                'create': {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                },
+                'getMany': {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    },
+                    isArray: true
+                },
+                'getOne': {
+                    method: 'GET',
+                    isArray: false,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
+                'update': {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                },
+                'delete': {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                }
             }
         );
     })
@@ -80,11 +112,43 @@ BoxingApp.factory("Login", function ($resource) {
                 predictionId: "@predictionId"
             },
             {
-                'create': {method: 'POST'},
-                'getMany': {method: 'GET', isArray: true},
-                'getOne': {method: 'GET', isArray: false},
-                'update': {method: 'PUT'},
-                'delete': {method: 'DELETE'}
+                'create': {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
+                'getMany': {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    },
+                    isArray: true
+                },
+                'getOne': {
+                    method: 'GET',
+                    isArray: false,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
+                'update': {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
+                'delete': {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                }
             }
         );
     });
