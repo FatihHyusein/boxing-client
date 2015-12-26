@@ -34,13 +34,27 @@
 
 <button class="btn btn-default" ng-click="removeMatch()">Remove</button>
 
-<button class="btn btn-default" ng-click="addPrediction()" ng-disabled="match.CurrentPrediction.Id && match.CurrentPrediction.Winner">Add Prediction</button>
+<button class="btn btn-default" ng-click="addPrediction()"
+        ng-disabled="match.CurrentPrediction.Id && match.CurrentPrediction.Winner">Add Prediction
+</button>
 <button class="btn btn-default" ng-click="editPrediction()">Edit Prediction</button>
 <button class="btn btn-default" ng-click="deletePrediction()">Delete Prediction</button>
 
-<label> Boxer1:
-    <input type="radio" ng-model="match.CurrentPrediction.Winner" value="1">
-</label>
-<label> Boxer 2:
-    <input type="radio" ng-model="match.CurrentPrediction.Winner" value="2">
-</label>
+<button class="btn btn-default" ui-sref="matches.updateWinner({id:match.Id})">Update Winner</button>
+
+<div ng-if="match.CurrentPrediction.IsClosedMatch != true">
+    <label> Boxer1:
+        <input type="radio" ng-model="match.CurrentPrediction.Winner" value="1">
+    </label>
+    <label> Boxer 2:
+        <input type="radio" ng-model="match.CurrentPrediction.Winner" value="2">
+    </label>
+</div>
+<div ng-if="match.CurrentPrediction.IsClosedMatch == true">
+    <label> Boxer1:
+        <input type="radio" ng-model="match.CurrentPrediction.Winner" value="1">
+    </label>
+    <label> Boxer 2:
+        <input type="radio" ng-model="match.CurrentPrediction.Winner" value="2">
+    </label>
+</div>

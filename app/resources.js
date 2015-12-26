@@ -24,7 +24,7 @@ BoxingApp.factory("Login", function ($resource) {
 
 
     .factory("User", function ($resource) {
-        return $resource(url + "users/:id", {id: "@id"},
+        return $resource(url + "users/:id/", {id: "@id"},
             {
                 'create': {
                     method: 'POST',
@@ -48,13 +48,34 @@ BoxingApp.factory("Login", function ($resource) {
                         'Auth-Token': localStorage.getItem("authToken")
                     }
                 },
-                'update': {method: 'PUT'},
+                'update': {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Auth-Token': localStorage.getItem("authToken")
+                    }
+                },
                 'delete': {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'admin-token': localStorage.getItem("authToken")
                     }
+                }
+            }
+        );
+    })
+
+    .factory("PastMatch", function ($resource) {
+        return $resource(url + "matches/pendingPastMatches/:id", {id: "@_id"},
+            {
+                'getMany': {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    },
+                    isArray: true
                 }
             }
         );
@@ -96,6 +117,34 @@ BoxingApp.factory("Login", function ($resource) {
                 },
                 'delete': {
                     method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                }
+            }
+        );
+    })
+
+    .factory("UpdateWinner", function ($resource) {
+        return $resource(url + "matches/:id/updateWinner", {id: "@_id"},
+            {
+                'update': {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'admin-token': localStorage.getItem("authToken")
+                    }
+                }
+            }
+        );
+    })
+
+    .factory("CancelMatch", function ($resource) {
+        return $resource(url + "matches/:id/cancelMatch", {id: "@_id"},
+            {
+                'update': {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'admin-token': localStorage.getItem("authToken")

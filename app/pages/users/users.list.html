@@ -8,9 +8,9 @@
     <table class="table table-hover table-striped">
         <thead>
         <tr>
-            <th ng-click="getUsers({sort:'fullName'})">Full Name</th>
-            <th ng-click="getUsers({sort:'username'})">Username</th>
-            <th ng-click="getUsers({sort:'rating'})">Rating</th>
+            <th ng-click="getUsers({sort:'FullName'})">Full Name</th>
+            <th ng-click="getUsers({sort:'Username'})">Username</th>
+            <th ng-click="getUsers({sort:'Rating'})">Rating</th>
         </tr>
         </thead>
         <tr ng-repeat="user in users" ui-sref="users.detail({id:user.Id})">

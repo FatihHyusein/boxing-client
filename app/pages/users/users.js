@@ -38,7 +38,7 @@ angular.module('boxing.users', ['ui.router'])
                                 $scope.filters = {
                                     skip: 0,
                                     take: 5,
-                                    sort: 'rating'
+                                    sort: 'Rating'
                                 };
                                 $scope.getUsers = function (filter) {
                                     if (filter && filter.sort) {
@@ -98,15 +98,25 @@ angular.module('boxing.users', ['ui.router'])
                         views: {
                             '': {
                                 templateUrl: 'pages/users/details/users.edit.html',
-                                controller: ['$scope', '$stateParams', '$state', 'User',
-                                    function ($scope, $stateParams, $state, User) {
+                                controller: ['$scope', '$stateParams', '$state', 'User','getUpdateDataSvc',
+                                    function ($scope, $stateParams, $state, User,getUpdateDataSvc) {
                                         $scope.user = User.getOne({
                                             id: $stateParams.id
                                         });
 
-                                        $scope.save = function () {
-                                            // Go back up. '^' means up one. '^.^' would be up twice, to the grandparent.
-                                            $state.go("users.detail", {id: $stateParams.id});
+                                        $scope.updateUser = function () {
+                                            User.update({
+                                                    id: $stateParams.id
+                                                },
+                                                $.param(getUpdateDataSvc.getSendData($scope.user)),
+                                                successUpdateUser
+                                            );
+
+                                            function successUpdateUser() {
+
+                                                //// Go back up. '^' means up one. '^.^' would be up twice, to the grandparent.
+                                                $state.go("users.detail", {id: $stateParams.id});
+                                            }
                                         };
                                     }
                                 ]

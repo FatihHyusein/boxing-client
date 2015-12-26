@@ -32,13 +32,14 @@ angular.module('boxing.matches', ['ui.router'])
                     .state('matches.list', {
                         url: '',
                         templateUrl: 'pages/matches/matches.list.html',
-                        controller: ['$scope', '$state', 'Match',
-                            function ($scope, $state, Match) {
+                        controller: ['$scope', '$state', 'Match', 'PastMatch',
+                            function ($scope, $state, Match, PastMatch) {
+                                var pastPendingMatches = false;
                                 var currentPage = 0;
                                 $scope.filters = {
                                     skip: 0,
                                     take: 5,
-                                    sort: 'date'
+                                    sort: 'DateOfMatch'
                                 };
                                 $scope.getMatches = function (filter) {
                                     if (filter && filter.sort) {
@@ -60,7 +61,18 @@ angular.module('boxing.matches', ['ui.router'])
                                     }
 
                                     $scope.filters.skip = $scope.filters.take * currentPage;
-                                    $scope.matches = Match.getMany($scope.filters);
+
+                                    if(pastPendingMatches) {
+                                        $scope.matches = PastMatch.getMany($scope.filters);
+                                    }
+                                    else {
+                                        $scope.matches = Match.getMany($scope.filters);
+                                    }
+                                };
+
+                                $scope.getPendingPastMatches = function () {
+                                    pastPendingMatches = !pastPendingMatches;
+                                    $scope.getMatches();
                                 };
 
                                 $scope.getMatches();
@@ -93,8 +105,7 @@ angular.module('boxing.matches', ['ui.router'])
                                                 },
                                                 $.param({winner: $scope.match.CurrentPrediction.Winner}),
                                                 successPredictionUpdate
-                                            )
-                                            ;
+                                            );
 
                                             function successPredictionUpdate() {
 
@@ -137,8 +148,8 @@ angular.module('boxing.matches', ['ui.router'])
                         views: {
                             '': {
                                 templateUrl: 'pages/matches/details/matches.edit.html',
-                                controller: ['$scope', '$stateParams', '$state', 'Match',
-                                    function ($scope, $stateParams, $state, Match) {
+                                controller: ['$scope', '$stateParams', '$state', 'Match', 'getUpdateDataSvc',
+                                    function ($scope, $stateParams, $state, Match, getUpdateDataSvc) {
                                         $scope.match = Match.getOne({
                                             id: $stateParams.id
                                         });
@@ -147,6 +158,7 @@ angular.module('boxing.matches', ['ui.router'])
                                             Match.update({
                                                     id: $stateParams.id
                                                 },
+                                                $.param(getUpdateDataSvc.getSendData($scope.match)),
                                                 successUpdate
                                             );
 
@@ -178,6 +190,45 @@ angular.module('boxing.matches', ['ui.router'])
 
                                             function successCreate(res) {
                                                 $state.go("matches.detail", {id: res.Id});
+                                            }
+                                        };
+                                    }
+                                ]
+                            }
+                        }
+                    })
+
+                    .state('matches.updateWinner', {
+                        url: '/{id:[0-9]{1,4}}',
+
+                        views: {
+                            '': {
+                                templateUrl: 'pages/matches/details/matches.updateWinner.html',
+                                controller: ['$scope', '$stateParams', '$state', 'UpdateWinner', 'Match', 'CancelMatch',
+                                    function ($scope, $stateParams, $state, UpdateWinner, Match, CancelMatch) {
+                                        $scope.match = Match.getOne({
+                                            id: $stateParams.id
+                                        });
+
+                                        $scope.saveBoxingResult = function () {
+                                            UpdateWinner.update({
+                                                    id: $stateParams.id
+                                                },
+                                                $.param({Winner: $scope.match.Winner}), successSaveBoxingResult);
+
+                                            function successSaveBoxingResult(response) {
+                                                $state.go("matches.detail", {id: response.Id});
+                                            }
+                                        };
+
+                                        $scope.cancelMatch = function () {
+                                            CancelMatch.update({
+                                                    id: $stateParams.id
+                                                },
+                                                {}, successCancel);
+
+                                            function successCancel(response) {
+                                                $state.go("matches.detail", {id: response.Id});
                                             }
                                         };
                                     }
