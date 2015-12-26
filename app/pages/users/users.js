@@ -19,7 +19,7 @@ angular.module('boxing.users', ['ui.router'])
                         resolve: {
                             users: ['User',
                                 function (User) {
-                                    return User.getMany();
+                                    //return User.getMany();
                                 }]
                         },
 
@@ -32,13 +32,14 @@ angular.module('boxing.users', ['ui.router'])
                     .state('users.list', {
                         url: '',
                         templateUrl: 'pages/users/users.list.html',
-                        controller: ['$scope', '$state', 'User',
-                            function ($scope, $state, User) {
+                        controller: ['$scope','$rootScope', '$state', 'User',
+                            function ($scope,$rootScope, $state, User) {
                                 var currentPage = 0;
                                 $scope.filters = {
                                     skip: 0,
                                     take: 5,
-                                    sort: 'Rating'
+                                    sort: 'Rating',
+                                    search: ''
                                 };
                                 $scope.getUsers = function (filter) {
                                     if (filter && filter.sort) {
@@ -61,6 +62,11 @@ angular.module('boxing.users', ['ui.router'])
 
                                     $scope.filters.skip = $scope.filters.take * currentPage;
                                     $scope.users = User.getMany($scope.filters);
+                                };
+
+                                $rootScope.search = function (searchInput) {
+                                    $scope.filters.search = searchInput;
+                                    $scope.getUsers();
                                 };
 
                                 $scope.getUsers();
@@ -98,8 +104,8 @@ angular.module('boxing.users', ['ui.router'])
                         views: {
                             '': {
                                 templateUrl: 'pages/users/details/users.edit.html',
-                                controller: ['$scope', '$stateParams', '$state', 'User','getUpdateDataSvc',
-                                    function ($scope, $stateParams, $state, User,getUpdateDataSvc) {
+                                controller: ['$scope', '$stateParams', '$state', 'User', 'getUpdateDataSvc',
+                                    function ($scope, $stateParams, $state, User, getUpdateDataSvc) {
                                         $scope.user = User.getOne({
                                             id: $stateParams.id
                                         });

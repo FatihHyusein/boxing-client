@@ -19,7 +19,7 @@ angular.module('boxing.matches', ['ui.router'])
                         resolve: {
                             matches: ['Match',
                                 function (Match) {
-                                    return Match.getMany();
+                                    //return Match.getMany();
                                 }]
                         },
 
@@ -32,14 +32,15 @@ angular.module('boxing.matches', ['ui.router'])
                     .state('matches.list', {
                         url: '',
                         templateUrl: 'pages/matches/matches.list.html',
-                        controller: ['$scope', '$state', 'Match', 'PastMatch',
-                            function ($scope, $state, Match, PastMatch) {
+                        controller: ['$scope', '$rootScope', '$state', 'Match', 'PastMatch',
+                            function ($scope, $rootScope, $state, Match, PastMatch) {
                                 var pastPendingMatches = false;
                                 var currentPage = 0;
                                 $scope.filters = {
                                     skip: 0,
                                     take: 5,
-                                    sort: 'DateOfMatch'
+                                    sort: 'DateOfMatch',
+                                    search: ''
                                 };
                                 $scope.getMatches = function (filter) {
                                     if (filter && filter.sort) {
@@ -62,7 +63,7 @@ angular.module('boxing.matches', ['ui.router'])
 
                                     $scope.filters.skip = $scope.filters.take * currentPage;
 
-                                    if(pastPendingMatches) {
+                                    if (pastPendingMatches) {
                                         $scope.matches = PastMatch.getMany($scope.filters);
                                     }
                                     else {
@@ -72,6 +73,11 @@ angular.module('boxing.matches', ['ui.router'])
 
                                 $scope.getPendingPastMatches = function () {
                                     pastPendingMatches = !pastPendingMatches;
+                                    $scope.getMatches();
+                                };
+
+                                $rootScope.search = function (searchInput) {
+                                    $scope.filters.search = searchInput;
                                     $scope.getMatches();
                                 };
 

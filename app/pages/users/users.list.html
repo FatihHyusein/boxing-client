@@ -16,7 +16,7 @@
         <tr ng-repeat="user in users" ui-sref="users.detail({id:user.Id})">
             <td>{{user.FullName}}</td>
             <td>{{user.Username}}</td>
-            <td>{{user.Rating}}</td>
+            <td>{{user.Rating.Rating}}</td>
         </tr>
     </table>
 
