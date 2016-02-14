@@ -4,7 +4,9 @@
         <option value="10">10</option>
         <option value="20">20</option>
     </select>
-    <button class="btn btn-default" ng-click="getPendingPastMatches()">Get Pending Past Matches</button>
+    <label class="pull-right">Get Pending Past Matches
+        <input type="checkbox" ng-change="getPendingPastMatches()" ng-model="boxCategory">
+    </label>
 
     <table class="table table-hover table-striped">
         <thead>

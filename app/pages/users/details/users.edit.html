@@ -1,8 +1,6 @@
-<div>
-    <label> Full Name:
-        <input type="text" ng-model="user.FullName">
-    </label>
+<div class="form-group">
+    <label for="fullname" class="control-label">Full Name:</label>
+    <input type="text" class="form-control" ng-model="user.FullName" id="fullname">
 </div>
 
-
-<button class="btn btn-default" ng-click="updateUser()">Save</button>
+<button class="btn btn-success" ng-click="updateUser()">Save</button>

@@ -16,7 +16,7 @@
 
 <button class="btn btn-default" ui-sref="users.edit({id:user.Id})">Edit</button>
 
-<button class="btn btn-default" ng-click="removeUser(user.Id)">Remove</button>
+<button class="btn btn-danger" ng-click="removeUser(user.Id)">Remove</button>
 
 <div ng-repeat="prediction in user.Predictions">
     <p>{{prediction.MatchId}}</p>
